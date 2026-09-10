@@ -156,6 +156,8 @@ var (
 	ErrUserSettingsNotFound         = errors.New("user settings not found")
 	ErrExternalSubscriptionNotFound = errors.New("external subscription not found")
 	ErrExternalSubscriptionExists   = errors.New("external subscription already exists")
+	ErrSingboxServerNotFound        = errors.New("singbox server not found")
+	ErrSingboxServerExists          = errors.New("singbox server already exists")
 )
 
 var (
@@ -223,6 +225,8 @@ type Node struct {
 	// ProbeEnabled 外部节点连通性探测开关(默认关)。
 	// 每次探测都要起一个 mihomo 进程真连一次,开销不小,所以由用户逐个勾选而不是全量跑。
 	ProbeEnabled bool
+	// SingboxServerID 非 nil 时表示该节点由 sing-box 服务器同步产生,关联 singbox_servers.id。
+	SingboxServerID *int64
 	CreatedAt    time.Time
 	UpdatedAt    time.Time
 }
@@ -773,6 +777,11 @@ CREATE INDEX IF NOT EXISTS idx_nodes_enabled ON nodes(enabled);
 
 	// 外部节点连通性探测开关。默认 0:探测要起 mihomo 真连一次,不该对全部导入节点默认开。
 	if err := r.ensureNodeColumn("probe_enabled", "INTEGER NOT NULL DEFAULT 0"); err != nil {
+		return err
+	}
+
+	// sing-box 服务器关联列：非 NULL 时表示节点由 singbox 服务器同步产生
+	if err := r.ensureNodeColumn("singbox_server_id", "INTEGER"); err != nil {
 		return err
 	}
 
@@ -1374,6 +1383,65 @@ CREATE TABLE IF NOT EXISTS rule_providers (
 
 	if err := r.migrateLogTables(); err != nil {
 		return err
+	}
+
+	if err := r.migrateSingboxServers(); err != nil {
+		return err
+	}
+
+	// mmwX compatibility modules
+	migrations := []func() error{
+		r.migrateRemoteServers,
+		r.migrateServerReturnRoutes,
+		r.migrateServerSystemTrafficSnapshots,
+		r.migrateServerXrayConfigSnapshots,
+		r.migrateNodeReachability,
+		r.migrateXrayServers,
+		r.migrateNodeTraffic,
+		r.migrateUserTraffic,
+		r.migrateUserEmailTraffic,
+		r.migrateTrafficSnapshots,
+		r.migrateBatchInbounds,
+		r.migrateBatchOutbounds,
+		r.migrateUserInboundConfigs,
+		r.migrateUserOutbounds,
+		r.migratePackages,
+		r.migrateUserPackageAssignments,
+		r.migratePackageAssignmentInboundConfigs,
+		r.migratePackageAssignmentSubaccounts,
+		r.migratePackageNodeTrafficSuspensions,
+		r.migratePackageUserNodeTrafficBaselines,
+		r.migrateInviteCodes,
+		r.migrateInviteCodeUses,
+		r.migrateRenewalRequests,
+		r.migrateUserTrafficRecords,
+		r.migrateUserTrafficCycleCarry,
+		r.migrateUserRoutedOutboundActions,
+		r.migrateUserSubaccounts,
+		r.migrateUserAPITokens,
+		r.migrateCertificates,
+		r.migrateDNSProviders,
+		r.migrateForwardChains,
+		r.migrateForwardChainHops,
+		r.migrateForwardChainBranches,
+		r.migrateForwardChainNodes,
+		r.migrateForwardGroups,
+		r.migrateForwardGroupMembers,
+		r.migrateForwardDailyTraffic,
+		r.migrateForwardHopMetrics,
+		r.migrateWGDevices,
+		r.migrateWGLeases,
+		r.migrateFederatedServers,
+		r.migrateSharedServers,
+		r.migrateAnnouncements,
+		r.migrateRoutingRulePresets,
+		r.migrateTGAudit,
+		r.migrateTrafficDailyTables,
+	}
+	for _, m := range migrations {
+		if err := m(); err != nil {
+			return err
+		}
 	}
 
 	return nil

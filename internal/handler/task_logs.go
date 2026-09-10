@@ -30,14 +30,9 @@ var taskTypes = []taskType{
 	{"wal_checkpoint", "数据库 WAL 巡检"},
 	{"traffic_collector", "流量采集"},
 	{"speed_collector", "测速采集"},
-	{"traffic_enforcer", "流量限制执行"},
 	{"daily_snapshot", "每日快照"},
-	{"orphan_xray_cleaner", "孤儿客户端清理"},
 	{"notify_daily_traffic", "每日流量推送"},
-	{"ddns_reconciler", "DDNS 重试"},
-	{"cert_renewal", "证书续期"},
-	{"node_tls_fingerprint_backfill", "节点证书指纹补全"},
-	{"probe_quality_alert", "探针质量告警"},
+	{"rule_provider_refresh", "规则模板刷新"},
 }
 
 func (h *TaskLogHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {

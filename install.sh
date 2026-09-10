@@ -90,6 +90,15 @@ install_binary() {
     chmod +x "/tmp/$BINARY_NAME"
     mv "/tmp/$BINARY_NAME" "$INSTALL_DIR/$SERVICE_NAME"
     echo_info "已安装到 $INSTALL_DIR/$SERVICE_NAME"
+
+    # 安装 mmw-cli 快捷管理命令
+    local script_dir
+    script_dir=$(cd "$(dirname "$0")" && pwd)
+    if [ -f "$script_dir/mmw-cli.sh" ]; then
+        cp "$script_dir/mmw-cli.sh" "$INSTALL_DIR/mmw"
+        chmod +x "$INSTALL_DIR/mmw"
+        echo_info "已安装快捷命令: mmw (面板管理 + sing-box 服务器管理)"
+    fi
 }
 
 # 创建数据目录
@@ -185,13 +194,17 @@ show_status() {
     echo "🌐 访问地址: http://$(hostname -I | awk '{print $1}'):$CONFIGURED_PORT"
     echo ""
     echo "常用命令:"
-    echo "  启动服务: systemctl start $SERVICE_NAME"
-    echo "  停止服务: systemctl stop $SERVICE_NAME"
-    echo "  重启服务: systemctl restart $SERVICE_NAME"
-    echo "  查看状态: systemctl status $SERVICE_NAME"
-    echo "  查看日志: journalctl -u $SERVICE_NAME -f"
-    echo "  更新版本: curl -sL https://raw.githubusercontent.com/${GITHUB_REPO}/main/install.sh | sudo bash -s update"
-    echo "  卸载服务: curl -sL https://raw.githubusercontent.com/${GITHUB_REPO}/main/install.sh | sudo bash -s uninstall"
+    echo "  mmw status    查看面板状态"
+    echo "  mmw restart   重启面板"
+    echo "  mmw update    更新版本"
+    echo "  mmw backup    备份数据"
+    echo "  mmw sb list   列出 sing-box 服务器"
+    echo "  mmw sb help   sing-box 管理帮助"
+    echo "  mmw help      完整帮助"
+    echo ""
+    echo "  systemctl start $SERVICE_NAME"
+    echo "  systemctl stop $SERVICE_NAME"
+    echo "  journalctl -u $SERVICE_NAME -f"
     echo ""
     echo "⚠️  首次访问需要完成初始化配置"
     echo ""

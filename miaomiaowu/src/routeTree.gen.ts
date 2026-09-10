@@ -14,6 +14,7 @@ import { Route as TemplatesRouteImport } from './routes/templates'
 import { Route as SystemSettingsRouteImport } from './routes/system-settings'
 import { Route as SubscriptionRouteImport } from './routes/subscription'
 import { Route as SubscribeFilesRouteImport } from './routes/subscribe-files'
+import { Route as SingboxServersRouteImport } from './routes/singbox-servers'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RulesRouteImport } from './routes/rules'
 import { Route as RuleProvidersRouteImport } from './routes/rule-providers'
@@ -57,6 +58,11 @@ const SubscriptionRoute = SubscriptionRouteImport.update({
 const SubscribeFilesRoute = SubscribeFilesRouteImport.update({
   id: '/subscribe-files',
   path: '/subscribe-files',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SingboxServersRoute = SingboxServersRouteImport.update({
+  id: '/singbox-servers',
+  path: '/singbox-servers',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -168,6 +174,7 @@ export interface FileRoutesByFullPath {
   '/rule-providers': typeof RuleProvidersRoute
   '/rules': typeof RulesRoute
   '/settings': typeof SettingsRoute
+  '/singbox-servers': typeof SingboxServersRoute
   '/subscribe-files': typeof SubscribeFilesRouteWithChildren
   '/subscription': typeof SubscriptionRouteWithChildren
   '/system-settings': typeof SystemSettingsRoute
@@ -192,6 +199,7 @@ export interface FileRoutesByTo {
   '/rule-providers': typeof RuleProvidersRoute
   '/rules': typeof RulesRoute
   '/settings': typeof SettingsRoute
+  '/singbox-servers': typeof SingboxServersRoute
   '/system-settings': typeof SystemSettingsRoute
   '/users': typeof UsersRoute
   '/subscribe-files/custom': typeof SubscribeFilesCustomRoute
@@ -216,6 +224,7 @@ export interface FileRoutesById {
   '/rule-providers': typeof RuleProvidersRoute
   '/rules': typeof RulesRoute
   '/settings': typeof SettingsRoute
+  '/singbox-servers': typeof SingboxServersRoute
   '/subscribe-files': typeof SubscribeFilesRouteWithChildren
   '/subscription': typeof SubscriptionRouteWithChildren
   '/system-settings': typeof SystemSettingsRoute
@@ -244,6 +253,7 @@ export interface FileRouteTypes {
     | '/rule-providers'
     | '/rules'
     | '/settings'
+    | '/singbox-servers'
     | '/subscribe-files'
     | '/subscription'
     | '/system-settings'
@@ -268,6 +278,7 @@ export interface FileRouteTypes {
     | '/rule-providers'
     | '/rules'
     | '/settings'
+    | '/singbox-servers'
     | '/system-settings'
     | '/users'
     | '/subscribe-files/custom'
@@ -291,6 +302,7 @@ export interface FileRouteTypes {
     | '/rule-providers'
     | '/rules'
     | '/settings'
+    | '/singbox-servers'
     | '/subscribe-files'
     | '/subscription'
     | '/system-settings'
@@ -318,6 +330,7 @@ export interface RootRouteChildren {
   RuleProvidersRoute: typeof RuleProvidersRoute
   RulesRoute: typeof RulesRoute
   SettingsRoute: typeof SettingsRoute
+  SingboxServersRoute: typeof SingboxServersRoute
   SubscribeFilesRoute: typeof SubscribeFilesRouteWithChildren
   SubscriptionRoute: typeof SubscriptionRouteWithChildren
   SystemSettingsRoute: typeof SystemSettingsRoute
@@ -361,6 +374,13 @@ declare module '@tanstack/react-router' {
       path: '/subscribe-files'
       fullPath: '/subscribe-files'
       preLoaderRoute: typeof SubscribeFilesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/singbox-servers': {
+      id: '/singbox-servers'
+      path: '/singbox-servers'
+      fullPath: '/singbox-servers'
+      preLoaderRoute: typeof SingboxServersRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -572,6 +592,7 @@ const rootRouteChildren: RootRouteChildren = {
   RuleProvidersRoute: RuleProvidersRoute,
   RulesRoute: RulesRoute,
   SettingsRoute: SettingsRoute,
+  SingboxServersRoute: SingboxServersRoute,
   SubscribeFilesRoute: SubscribeFilesRouteWithChildren,
   SubscriptionRoute: SubscriptionRouteWithChildren,
   SystemSettingsRoute: SystemSettingsRoute,
