@@ -1389,6 +1389,61 @@ CREATE TABLE IF NOT EXISTS rule_providers (
 		return err
 	}
 
+	// mmwX compatibility modules
+	migrations := []func() error{
+		r.migrateRemoteServers,
+		r.migrateServerReturnRoutes,
+		r.migrateServerSystemTrafficSnapshots,
+		r.migrateServerXrayConfigSnapshots,
+		r.migrateNodeReachability,
+		r.migrateXrayServers,
+		r.migrateNodeTraffic,
+		r.migrateUserTraffic,
+		r.migrateUserEmailTraffic,
+		r.migrateTrafficSnapshots,
+		r.migrateBatchInbounds,
+		r.migrateBatchOutbounds,
+		r.migrateUserInboundConfigs,
+		r.migrateUserOutbounds,
+		r.migratePackages,
+		r.migrateUserPackageAssignments,
+		r.migratePackageAssignmentInboundConfigs,
+		r.migratePackageAssignmentSubaccounts,
+		r.migratePackageNodeTrafficSuspensions,
+		r.migratePackageUserNodeTrafficBaselines,
+		r.migrateInviteCodes,
+		r.migrateInviteCodeUses,
+		r.migrateRenewalRequests,
+		r.migrateUserTrafficRecords,
+		r.migrateUserTrafficCycleCarry,
+		r.migrateUserRoutedOutboundActions,
+		r.migrateUserSubaccounts,
+		r.migrateUserAPITokens,
+		r.migrateCertificates,
+		r.migrateDNSProviders,
+		r.migrateForwardChains,
+		r.migrateForwardChainHops,
+		r.migrateForwardChainBranches,
+		r.migrateForwardChainNodes,
+		r.migrateForwardGroups,
+		r.migrateForwardGroupMembers,
+		r.migrateForwardDailyTraffic,
+		r.migrateForwardHopMetrics,
+		r.migrateWGDevices,
+		r.migrateWGLeases,
+		r.migrateFederatedServers,
+		r.migrateSharedServers,
+		r.migrateAnnouncements,
+		r.migrateRoutingRulePresets,
+		r.migrateTGAudit,
+		r.migrateTrafficDailyTables,
+	}
+	for _, m := range migrations {
+		if err := m(); err != nil {
+			return err
+		}
+	}
+
 	return nil
 }
 
