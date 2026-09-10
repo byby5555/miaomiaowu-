@@ -5,6 +5,7 @@ import {
   Activity,
   Link as LinkIcon,
   Radar,
+  Server,
   Users,
   Files,
   Zap,
@@ -77,6 +78,11 @@ const adminNavLinks = [
     title: '探针管理',
     to: '/probe',
     icon: Radar,
+  },
+  {
+    title: 'sing-box 服务器',
+    to: '/singbox-servers',
+    icon: Server,
   },
   {
     title: '用户管理',

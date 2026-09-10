@@ -309,6 +309,10 @@ func main() {
 	mux.Handle("/api/admin/temp-subscription", auth.RequireAdmin(tokenStore, userRepo, handler.NewTempSubscriptionHandler()))
 	tempSubAccessHandler := handler.NewTempSubscriptionAccessHandler()
 
+	// sing-box 服务器管理
+	mux.Handle("/api/admin/singbox-servers", auth.RequireAdmin(tokenStore, userRepo, handler.NewSingboxServersHandler(repo)))
+	mux.Handle("/api/admin/singbox-servers/", auth.RequireAdmin(tokenStore, userRepo, handler.NewSingboxServersHandler(repo)))
+
 	// Combined handler for short links and web app
 	// 短链接默认为 3 + 3, 订阅code+用户code, 自定义最小为1+1, 不限制长度
 	// /t/{id} paths route to temporary subscription handler
